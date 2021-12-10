@@ -55,16 +55,20 @@ void Sculptor::setColor(float r, float g, float b, float alpha) {
     this->a = alpha;
 }
 
-void Sculptor::putVoxel(int x, int y, int z) {    
-    v[x][y][z].r = this->r;
-    v[x][y][z].g = this->g;
-    v[x][y][z].b = this->b;
-    v[x][y][z].a = this->a;
-    v[x][y][z].isOn = true;
+void Sculptor::putVoxel(int x, int y, int z) {
+    if (x < this->nx && y < this->ny && z < this->nz) {
+        v[x][y][z].r = this->r;
+        v[x][y][z].g = this->g;
+        v[x][y][z].b = this->b;
+        v[x][y][z].a = this->a;
+        v[x][y][z].isOn = true;
+    }
 }
 
 void Sculptor::cutVoxel(int x, int y, int z) {
-    v[x][y][z].isOn = false;
+    if (x < this->nx && y < this->ny && z < this->nz) {
+        v[x][y][z].isOn = false;
+    }
 }
 
 void Sculptor::putBox(int x0, int x1, int y0, int y1, int z0, int z1) {
@@ -98,11 +102,10 @@ void Sculptor::putSphere(int xcenter, int ycenter, int zcenter, int radius) {
 
                 /* Caso seja satisfeita a equação da esfera
                    o método putVoxel é chamado */
-                if (static_cast< float >(x - xcenter) * (x - xcenter) +
-                    static_cast< float >(y - ycenter) * (y - ycenter) +
-                    static_cast< float >(z - zcenter) * (z - zcenter) <= static_cast< float >(radius) * radius)
+                if ((x - xcenter) * (x - xcenter) +
+                    (y - ycenter) * (y - ycenter) +
+                    (z - zcenter) * (z - zcenter) <= radius * radius)
                 {
-
                     putVoxel(x, y, z);
                 }
             }
@@ -117,9 +120,9 @@ void Sculptor::cutSphere(int xcenter, int ycenter, int zcenter, int radius) {
 
                 /* Caso seja satisfeita a equação da esfera
                    o método cutVoxel é chamado */
-                if (static_cast< float >(x - xcenter) * (x - xcenter) +
-                    static_cast< float >(y - ycenter) * (y - ycenter) +
-                    static_cast< float >(z - zcenter) * (z - zcenter) <= static_cast< float >(radius) * radius)
+                if ((x - xcenter) * (x - xcenter) +
+                    (y - ycenter) * (y - ycenter) +
+                    (z - zcenter) * (z - zcenter) <= radius * radius)
                 {
                     cutVoxel(x, y, z);
                 }
@@ -135,9 +138,9 @@ void Sculptor::putEllipsoid(int xcenter, int ycenter, int zcenter, int rx, int r
 
                 /* Caso seja satisfeita a equação da elipsoide
                    o método putVoxel é chamado */
-                if (static_cast< float >((x - xcenter) * (x - xcenter)) / static_cast< float >(rx * rx) +
-                    static_cast< float >((y - ycenter) * (y - ycenter)) / static_cast< float >(ry * ry) +
-                    static_cast< float >((z - zcenter) * (z - zcenter)) / static_cast< float >(rz * rz) <= 1.0)
+                if (static_cast< float >((x - xcenter) * (x - xcenter)) / (rx * rx) +
+                    static_cast< float >((y - ycenter) * (y - ycenter)) / (ry * ry) +
+                    static_cast< float >((z - zcenter) * (z - zcenter)) / (rz * rz) <= 1.0)
                 {
                     putVoxel(x, y, z);
                 }
@@ -153,9 +156,9 @@ void Sculptor::cutEllipsoid(int xcenter, int ycenter, int zcenter, int rx, int r
 
                 /* Caso seja satisfeita a equação da elipsoide
                    o método cutVoxel é chamado */
-                if (static_cast< float >((x - xcenter) * (x - xcenter)) / static_cast< float >(rx * rx) +
-                    static_cast< float >((y - ycenter) * (y - ycenter)) / static_cast< float >(ry * ry) +
-                    static_cast< float >((z - zcenter) * (z - zcenter)) / static_cast< float >(rz * rz) <= 1.0)
+                if (static_cast< float >((x - xcenter) * (x - xcenter)) / (rx * rx) +
+                    static_cast< float >((y - ycenter) * (y - ycenter)) / (ry * ry) +
+                    static_cast< float >((z - zcenter) * (z - zcenter)) / (rz * rz) <= 1.0)
                 {
                     cutVoxel(x, y, z);
                 }
@@ -166,14 +169,14 @@ void Sculptor::cutEllipsoid(int xcenter, int ycenter, int zcenter, int rx, int r
 
 void Sculptor::writeOFF(const char* filename) {
     int NVoxels = 0, NVertices, NFaces;
-    float faces = 0.0;
+    int faces = 0;
 
     std::ofstream fout;
 
     fout.open(filename);
     if (!fout.is_open()){
        exit(1);
-       std::cout << "Não foi possivel gravar no arquivo";
+       std::cout << "Nao foi possivel gravar no arquivo";
     }
 
     fout << "OFF \n";
@@ -214,19 +217,25 @@ void Sculptor::writeOFF(const char* filename) {
         for (int j = 0; j < ny; j++) {
             for (int k = 0; k < nz; k++) {
                 if (v[i][j][k].isOn) {
-                    fout << 4 << " " << 0.0 + faces << " " << 3.0 + faces << " " << 2.0 + faces << " " << 1.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl
-                         << 4 << " " << 4.0 + faces << " " << 5.0 + faces << " " << 6.0 + faces << " " << 7.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl
-                         << 4 << " " << 0.0 + faces << " " << 1.0 + faces << " " << 5.0 + faces << " " << 4.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl
-                         << 4 << " " << 0.0 + faces << " " << 4.0 + faces << " " << 7.0 + faces << " " << 3.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl
-                         << 4 << " " << 3.0 + faces << " " << 7.0 + faces << " " << 6.0 + faces << " " << 2.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl
-                         << 4 << " " << 1.0 + faces << " " << 2.0 + faces << " " << 6.0 + faces << " " << 5.0 + faces << " "
-                         << v[i][j][k].r << " " << v[i][j][k].g << " " << v[i][j][k].b << " " << v[i][j][k].a << std::endl;
-                    faces += 8.0;
+                    fout << std::fixed << 4 << " " << 0 + faces << " " << 3 + faces << " " << 2 + faces << " " << 1 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl
+                         << 4 << " " << 4 + faces << " " << 5 + faces << " " << 6 + faces << " " << 7 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl
+                         << 4 << " " << 0 + faces << " " << 1 + faces << " " << 5 + faces << " " << 4 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl
+                         << 4 << " " << 0 + faces << " " << 4 + faces << " " << 7 + faces << " " << 3 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl
+                         << 4 << " " << 3 + faces << " " << 7 + faces << " " << 6 + faces << " " << 2 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl
+                         << 4 << " " << 1 + faces << " " << 2 + faces << " " << 6 + faces << " " << 5 + faces << " "
+                         << std::setprecision(2) << v[i][j][k].r << " " << std::setprecision(2) << v[i][j][k].g << " " <<
+                            std::setprecision(2) << v[i][j][k].b << " " << std::setprecision(2) << v[i][j][k].a << std::endl;
+                    faces += 8;
                  }
             }
         }
