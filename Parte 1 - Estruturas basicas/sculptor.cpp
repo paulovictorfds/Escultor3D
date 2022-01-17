@@ -3,10 +3,10 @@
 #include <fstream>
 #include <iomanip>
 
-Sculptor::Sculptor(int _nx, int _ny, int _nz) {
-    nx = _nx;
-    ny = _ny;
-    nz = _nz;
+Sculptor::Sculptor(int nx, int ny, int nz) {
+    this->nx = nx;
+    this->ny = ny;
+    this->nz = nz;
 
     v = new Voxel** [nx];
     for (int i = 0; i < nx; i++) {
@@ -52,21 +52,21 @@ void Sculptor::setColor(float r, float g, float b, float alpha) {
     this->r = r;
     this->g = g;
     this->b = b;
-    this->a = alpha;
+    this->alpha = alpha;
 }
 
 void Sculptor::putVoxel(int x, int y, int z) {
-    if (x < this->nx && y < this->ny && z < this->nz) {
-        v[x][y][z].r = this->r;
-        v[x][y][z].g = this->g;
-        v[x][y][z].b = this->b;
-        v[x][y][z].a = this->a;
+    if (x < nx && y < ny && z < nz) {
+        v[x][y][z].r = r;
+        v[x][y][z].g = g;
+        v[x][y][z].b = b;
+        v[x][y][z].alpha = alpha;
         v[x][y][z].isOn = true;
     }
 }
 
 void Sculptor::cutVoxel(int x, int y, int z) {
-    if (x < this->nx && y < this->ny && z < this->nz) {
+    if (x < nx && y < ny && z < nz) {
         v[x][y][z].isOn = false;
     }
 }
@@ -86,19 +86,15 @@ void Sculptor::cutBox(int x0, int x1, int y0, int y1, int z0, int z1) {
         for (int y = y0; y <= y1; y++) {
             for (int z = z0; z <= z1; z++) {
                 cutVoxel(x, y, z);
-                v[x][y][z].r = this->r;
-                v[x][y][z].g = this->g;
-                v[x][y][z].b = this->b;
-                v[x][y][z].a = this->a;
             }
         }
     }
 }
 
 void Sculptor::putSphere(int xcenter, int ycenter, int zcenter, int radius) {
-    for (int x = 0; x <= this->nx; x++) {
-        for (int y = 0; y <= this->ny; y++) {
-            for (int z = 0; z <= this->nz; z++) {
+    for (int x = 0; x <= xcenter + radius; x++) {
+        for (int y = 0; y <= ycenter + radius; y++) {
+            for (int z = 0; z <= zcenter + radius; z++) {
 
                 /* Caso seja satisfeita a equação da esfera
                    o método putVoxel é chamado */
@@ -114,9 +110,9 @@ void Sculptor::putSphere(int xcenter, int ycenter, int zcenter, int radius) {
 }
 
 void Sculptor::cutSphere(int xcenter, int ycenter, int zcenter, int radius) {
-    for (int x = 0; x <= this->nx; x++) {
-        for (int y = 0; y <= this->ny; y++) {
-            for (int z = 0; z <= this->nz; z++) {
+    for (int x = 0; x <= xcenter + radius; x++) {
+        for (int y = 0; y <= ycenter + radius; y++) {
+            for (int z = 0; z <= zcenter + radius; z++) {
 
                 /* Caso seja satisfeita a equação da esfera
                    o método cutVoxel é chamado */
@@ -219,22 +215,22 @@ void Sculptor::writeOFF(const char* filename) {
                 if (v[x][y][z].isOn) {
                     fout << std::fixed << 4 << " " << 0 + faces << " " << 3 + faces << " " << 2 + faces << " " << 1 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl
                          << 4 << " " << 4 + faces << " " << 5 + faces << " " << 6 + faces << " " << 7 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl
                          << 4 << " " << 0 + faces << " " << 1 + faces << " " << 5 + faces << " " << 4 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl
                          << 4 << " " << 0 + faces << " " << 4 + faces << " " << 7 + faces << " " << 3 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl
                          << 4 << " " << 3 + faces << " " << 7 + faces << " " << 6 + faces << " " << 2 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl
                          << 4 << " " << 1 + faces << " " << 2 + faces << " " << 6 + faces << " " << 5 + faces << " "
                          << std::setprecision(2) << v[x][y][z].r << " " << std::setprecision(2) << v[x][y][z].g << " " <<
-                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].a << std::endl;
+                            std::setprecision(2) << v[x][y][z].b << " " << std::setprecision(2) << v[x][y][z].alpha << std::endl;
                     faces += 8;
                  }
             }
