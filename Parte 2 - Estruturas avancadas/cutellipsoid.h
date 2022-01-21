@@ -1,7 +1,6 @@
 #ifndef CUTELLIPSOID_H
 #define CUTELLIPSOID_H
 
-#include "sculptor.h"
 #include "figurageometrica.h"
 
 class CutEllipsoid : public FiguraGeometrica {

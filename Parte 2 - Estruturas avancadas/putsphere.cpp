@@ -6,10 +6,7 @@ PutSphere::PutSphere(int xcenter, int ycenter, int zcenter, int radius, float r,
     this->zcenter = zcenter;
     this->radius = radius;
 
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->alpha = alpha;
+    setColor(r, g, b, alpha);
 }
 
 void PutSphere::draw(Sculptor &s) {

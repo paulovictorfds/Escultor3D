@@ -1,7 +1,6 @@
 #ifndef CUTSPHERE_H
 #define CUTSPHERE_H
 
-#include "sculptor.h"
 #include "figurageometrica.h"
 
 class CutSphere : public FiguraGeometrica {

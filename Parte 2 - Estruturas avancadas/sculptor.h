@@ -2,7 +2,7 @@
 #define SCULPTOR_H
 
 struct Voxel {
-    float r, g, b; // Cores
+    float r, g, b; // Colors
     float alpha; // Transparency
     bool isOn; // Included or not
 };
@@ -10,10 +10,9 @@ struct Voxel {
 class Sculptor {
 
 protected:
-    Voxel ***v;
-    // 3D matrix
+    Voxel ***v; // 3D matrix
     int nx, ny, nz; // Dimensions
-    float r, g, b, alpha; // Current drawing color
+    float r, g, b, alpha; // Current drawing color and transparency
 public:
     Sculptor(int nx, int ny, int nz);
     ~Sculptor();

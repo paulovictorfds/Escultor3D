@@ -8,10 +8,7 @@ PutEllipsoid::PutEllipsoid(int xcenter, int ycenter, int zcenter, int rx, int ry
     this->ry = ry;
     this->rz = rz;
 
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->alpha = alpha;
+    setColor(r, g, b, alpha);
 }
 
 void PutEllipsoid::draw(Sculptor &s) {

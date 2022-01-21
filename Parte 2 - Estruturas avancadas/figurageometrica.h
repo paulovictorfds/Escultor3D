@@ -7,9 +7,10 @@ class FiguraGeometrica {
 protected:
     float r, g, b, alpha;
 public:
+    FiguraGeometrica();
     virtual ~FiguraGeometrica() { };
     virtual void draw(Sculptor &s) = 0;
-    FiguraGeometrica();
+    void setColor(float r, float g, float b, float alpha);    
 };
 
 #endif // FIGURAGEOMETRICA_H

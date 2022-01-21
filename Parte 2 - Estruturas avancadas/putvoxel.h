@@ -2,7 +2,6 @@
 #define PUTVOXEL_H
 
 #include "figurageometrica.h"
-#include "sculptor.h"
 
 class PutVoxel : public FiguraGeometrica {
 public:
@@ -11,7 +10,6 @@ public:
     void draw(Sculptor &s);
 protected:
     int x, y, z;
-    float r, g, b, alpha;
 };
 
 #endif // PUTVOXEL_H

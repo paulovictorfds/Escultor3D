@@ -6,6 +6,7 @@
 #include "figurageometrica.h"
 
 class Interpretador {
+private:
     int dimX, dimY, dimZ;
     float r, g, b, alpha;
 public:
